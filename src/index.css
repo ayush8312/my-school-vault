@@ -17,16 +17,18 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* Purple-blue theme inspired by UniformApp */
+    --primary: 258 89% 66%;
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 258 89% 76%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 69 84% 66%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 69 84% 66%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -35,6 +37,18 @@ All colors MUST be HSL.
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
+
+    /* Custom gradients for the school theme */
+    --gradient-hero: linear-gradient(135deg, hsl(258 89% 66%), hsl(235 89% 56%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    --gradient-accent: linear-gradient(90deg, hsl(69 84% 66%), hsl(158 64% 52%));
+    
+    /* Shadows with brand colors */
+    --shadow-elegant: 0 10px 30px -10px hsl(258 89% 66% / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(258 89% 66% / 0.15);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --radius: 0.5rem;
 
