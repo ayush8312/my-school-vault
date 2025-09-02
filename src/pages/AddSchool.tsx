@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ArrowLeft, Upload } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { useSchools, type SchoolInsert } from "@/hooks/useSchools";
 
 interface SchoolFormData {
   name: string;
@@ -22,6 +23,7 @@ interface SchoolFormData {
 
 const AddSchool = () => {
   const navigate = useNavigate();
+  const { addSchool, uploadSchoolImage } = useSchools();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
 
@@ -49,33 +51,35 @@ const AddSchool = () => {
   const onSubmit = async (data: SchoolFormData) => {
     setIsSubmitting(true);
     
-    // Simulate API call - In real implementation, you'd send this to your backend
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      let imageUrl = "";
       
-      // Get existing schools from localStorage or initialize empty array
-      const existingSchools = JSON.parse(localStorage.getItem('schools') || '[]');
+      // Upload image if provided
+      if (data.image && data.image[0]) {
+        const uploadedUrl = await uploadSchoolImage(data.image[0]);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+        }
+      }
       
-      // Create new school object with mock data
-      const newSchool = {
-        id: Date.now(),
+      // Prepare school data
+      const schoolData: SchoolInsert = {
         name: data.name,
         address: data.address,
         city: data.city,
         state: data.state,
         contact: data.contact,
         email_id: data.email_id,
-        image: imagePreview || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&h=300&fit=crop"
+        image: imageUrl || null
       };
       
-      // Add to existing schools
-      existingSchools.push(newSchool);
-      localStorage.setItem('schools', JSON.stringify(existingSchools));
-      
-      toast.success("School added successfully!");
+      // Add school to database
+      await addSchool(schoolData);
       navigate("/");
+      
     } catch (error) {
-      toast.error("Failed to add school. Please try again.");
+      console.error('Error adding school:', error);
+      // Error toast is handled in the hook
     } finally {
       setIsSubmitting(false);
     }

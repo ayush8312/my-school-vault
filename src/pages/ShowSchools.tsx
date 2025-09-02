@@ -4,75 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SchoolCard from "@/components/SchoolCard";
 import Navbar from "@/components/Navbar";
-import { Search, Plus, School as SchoolIcon } from "lucide-react";
-
-interface School {
-  id: number;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  contact: string;
-  email_id: string;
-  image: string;
-}
-
-// Mock data for demonstration
-const mockSchools: School[] = [
-  {
-    id: 1,
-    name: "Delhi Public School",
-    address: "Mathura Road, New Delhi",
-    city: "New Delhi",
-    state: "Delhi",
-    contact: "9876543210",
-    email_id: "info@dpsdelhi.com",
-    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&h=300&fit=crop"
-  },
-  {
-    id: 2,
-    name: "Modern School",
-    address: "Barakhamba Road, Connaught Place",
-    city: "New Delhi",
-    state: "Delhi",
-    contact: "9876543211",
-    email_id: "contact@modernschool.net",
-    image: "https://images.unsplash.com/photo-1562774053-701939374585?w=500&h=300&fit=crop"
-  },
-  {
-    id: 3,
-    name: "St. Xavier's School",
-    address: "Raj Nagar, Ghaziabad",
-    city: "Ghaziabad",
-    state: "Uttar Pradesh",
-    contact: "9876543212",
-    email_id: "admin@stxaviers.edu.in",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&h=300&fit=crop"
-  },
-  {
-    id: 4,
-    name: "Ryan International School",
-    address: "Sector 25, Rohini",
-    city: "New Delhi",
-    state: "Delhi",
-    contact: "9876543213",
-    email_id: "info@ryaninternational.org",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&h=300&fit=crop"
-  }
-];
+import { Search, Plus, School as SchoolIcon, Loader2 } from "lucide-react";
+import { useSchools } from "@/hooks/useSchools";
 
 const ShowSchools = () => {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [filteredSchools, setFilteredSchools] = useState<School[]>([]);
+  const { schools, loading, error, refetch } = useSchools();
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    // Load schools from localStorage and merge with mock data
-    const savedSchools = JSON.parse(localStorage.getItem('schools') || '[]');
-    const allSchools = [...mockSchools, ...savedSchools];
-    setSchools(allSchools);
-    setFilteredSchools(allSchools);
-  }, []);
+  const [filteredSchools, setFilteredSchools] = useState(schools);
 
   useEffect(() => {
     // Filter schools based on search query
@@ -127,14 +65,40 @@ const ShowSchools = () => {
                 School Directory
               </h2>
               <p className="text-muted-foreground">
-                {filteredSchools.length} schools found
-                {searchQuery && ` for "${searchQuery}"`}
+                {loading ? (
+                  "Loading schools..."
+                ) : error ? (
+                  "Error loading schools"
+                ) : (
+                  <>
+                    {filteredSchools.length} schools found
+                    {searchQuery && ` for "${searchQuery}"`}
+                  </>
+                )}
               </p>
             </div>
             <SchoolIcon className="h-8 w-8 text-primary" />
           </div>
 
-          {filteredSchools.length > 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading schools...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <SchoolIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                Error loading schools
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                {error}
+              </p>
+              <Button onClick={refetch} variant="outline" size="lg">
+                Try Again
+              </Button>
+            </div>
+          ) : filteredSchools.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredSchools.map((school) => (
                 <SchoolCard key={school.id} school={school} />

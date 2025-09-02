@@ -9,7 +9,7 @@ interface School {
   state: string;
   contact: string;
   email_id: string;
-  image: string;
+  image: string | null;
 }
 
 interface SchoolCardProps {
@@ -21,7 +21,7 @@ const SchoolCard = ({ school }: SchoolCardProps) => {
     <Card className="group overflow-hidden bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 hover:-translate-y-1">
       <div className="aspect-video overflow-hidden">
         <img
-          src={school.image}
+          src={school.image || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&h=300&fit=crop"}
           alt={school.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
