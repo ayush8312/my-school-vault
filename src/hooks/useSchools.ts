@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 export interface School {
@@ -34,6 +34,11 @@ export const useSchools = () => {
       setLoading(true);
       setError(null);
       
+      if (!isSupabaseConfigured || !supabase) {
+        setError('Supabase is not configured. Please connect to Supabase to use database features.');
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('schools')
         .select('*')
@@ -53,6 +58,11 @@ export const useSchools = () => {
 
   const addSchool = async (schoolData: SchoolInsert): Promise<School | null> => {
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        toast.error('Supabase is not configured. Please connect to Supabase to add schools.');
+        throw new Error('Supabase not configured');
+      }
+      
       const { data, error } = await supabase
         .from('schools')
         .insert([schoolData])
@@ -77,6 +87,11 @@ export const useSchools = () => {
 
   const uploadSchoolImage = async (file: File): Promise<string | null> => {
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        toast.error('Supabase is not configured. Please connect to Supabase to upload images.');
+        return null;
+      }
+      
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `school-images/${fileName}`;
